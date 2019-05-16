@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Just Show Me the UV Forecast</title>
+    <script>
+        function getUv() {
+            var zip = document.getElementById("zip").value;
+            console.log(zip);
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("forecast").innerHTML = this.responseText;
+                }
+            };
+            xhr.open("GET", "https://iaspub.epa.gov/enviro/efservice/getEnvirofactsUVHOURLY/ZIP/" + zip + "/JSON", true);
+            xhr.send();
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Let's get today's UV forecast.</h1>
+    </header>
+    <article>
+        <input type="text" id="zip" placeholder="Your zip code"/>
+        <button type="button" onclick="getUv()">Submit</button>
+        <h1>Results:</h1>
+        <div id="forecast"></div>
+    </article>
+</body>
+</html>
