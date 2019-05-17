@@ -15,6 +15,13 @@
             };
             xhr.open("GET", "https://iaspub.epa.gov/enviro/efservice/getEnvirofactsUVHOURLY/ZIP/" + zip + "/JSON", true);
             xhr.send();
+        };
+        function makeDivs() {
+            for (var i = 0; i < 10; i++) {
+                var div = document.createElement("div");
+                div.innerHTML = "<div>" + i + "</div>";
+                document.getElementById("forecast").appendChild(div);
+            }
         }
     </script>
 </head>
@@ -25,6 +32,7 @@
     <article>
         <input type="text" id="zip" placeholder="Your zip code"/>
         <button type="button" onclick="getUv()">Submit</button>
+        <!--<button type="button" onclick="makeDivs()">Submit</button>-->
         <h1>Results:</h1>
         <div id="forecast"></div>
     </article>
