@@ -10,19 +10,21 @@
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById("forecast").innerHTML = this.responseText;
+                    makeDivs(JSON.parse(this.responseText));
                 }
             };
             xhr.open("GET", "https://iaspub.epa.gov/enviro/efservice/getEnvirofactsUVHOURLY/ZIP/" + zip + "/JSON", true);
             xhr.send();
         };
-        function makeDivs() {
-            for (var i = 0; i < 10; i++) {
+        function makeDivs(json) {
+            console.log(json);
+            json.forEach(function (data, index) {
                 var div = document.createElement("div");
-                div.innerHTML = "<div>" + i + "</div>";
-                document.getElementById("forecast").appendChild(div);
-            }
-        }
+                div.innerHTML = "<div><span>" + data.DATE_TIME + ": </span><span> "
+                    + data.UV_VALUE + "</span ></div > ";
+                document.getElementById("forecast").appendChild(div);     
+            });
+        };
     </script>
 </head>
 <body>
