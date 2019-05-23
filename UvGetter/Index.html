@@ -3,14 +3,33 @@
 <head>
     <meta charset="utf-8" />
     <title>Just Show Me the UV Forecast</title>
+    <style>
+        .hidden { display: none;}
+        .shown { display: block;}
+    </style>
     <script>
         function getUv() {
             var zip = document.getElementById("zip").value;
+            if (zip.length == 10) {
+                document.getElementById("error").innerText = "It's 10";
+                document.getElementById("error").className -= "shown";
+                document.getElementById("error").className += "hidden";
+
+            }
+            else {
+                document.getElementById("error").innerText = "It's not 10";
+                document.getElementById("error").className -= "hidden";
+                document.getElementById("error").className += "shown";
+            }
+            // is it a number
+            // is it len 5?
+            // else set err div text unhide err div
             console.log(zip);
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
                     makeDivs(JSON.parse(this.responseText));
+                    colorSpan();
                 }
             };
             xhr.open("GET", "https://iaspub.epa.gov/enviro/efservice/getEnvirofactsUVHOURLY/ZIP/" + zip + "/JSON", true);
@@ -20,9 +39,15 @@
             console.log(json);
             json.forEach(function (data, index) {
                 var div = document.createElement("div");
-                div.innerHTML = "<div><span>" + data.DATE_TIME + ": </span><span> "
+                div.innerHTML = "<div><span>" + data.DATE_TIME + ": </span><span class=\"uv\"> "
                     + data.UV_VALUE + "</span ></div > ";
                 document.getElementById("forecast").appendChild(div);     
+            });
+        };
+        function colorSpan() {
+            var spans = document.getElementsByClassName("uv");
+            spans.forEach(function (data, index) {
+                data.addClass("red");
             });
         };
     </script>
@@ -35,6 +60,7 @@
         <input type="text" id="zip" placeholder="Your zip code"/>
         <button type="button" onclick="getUv()">Submit</button>
         <!--<button type="button" onclick="makeDivs()">Submit</button>-->
+        <h1 id="error" class="shown">foo</h1>
         <h1>Results:</h1>
         <div id="forecast"></div>
     </article>
