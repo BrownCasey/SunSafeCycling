@@ -6,25 +6,11 @@
     <style>
         .hidden { display: none;}
         .shown { display: block;}
+        #error {color: #FF0000;}
     </style>
     <script>
         function getUv() {
             var zip = document.getElementById("zip").value;
-            if (zip.length == 10) {
-                document.getElementById("error").innerText = "It's 10";
-                document.getElementById("error").className -= "shown";
-                document.getElementById("error").className += "hidden";
-
-            }
-            else {
-                document.getElementById("error").innerText = "It's not 10";
-                document.getElementById("error").className -= "hidden";
-                document.getElementById("error").className += "shown";
-            }
-            // is it a number
-            // is it len 5?
-            // else set err div text unhide err div
-            console.log(zip);
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
@@ -32,8 +18,22 @@
                     colorSpan();
                 }
             };
-            xhr.open("GET", "https://iaspub.epa.gov/enviro/efservice/getEnvirofactsUVHOURLY/ZIP/" + zip + "/JSON", true);
-            xhr.send();
+
+            if (Number.isInteger(zip)) {
+                if (zip.length == 5) {
+                    xhr.open("GET", "https://iaspub.epa.gov/enviro/efservice/getEnvirofactsUVHOURLY/ZIP/" + zip + "/JSON", true);
+                    xhr.send();
+                    document.getElementById("error").className = "hidden";
+                }
+                else {
+                    document.getElementById("error").innerText = "Zip code should be 5 digits.";
+                    document.getElementById("error").className = "shown";
+                }
+            }
+            else {
+                document.getElementById("error").innerText = "Zip code should be a whole number.";
+                document.getElementById("error").className = "shown";
+            }
         };
         function makeDivs(json) {
             console.log(json);
@@ -44,6 +44,7 @@
                 document.getElementById("forecast").appendChild(div);     
             });
         };
+
         function colorSpan() {
             var spans = document.getElementsByClassName("uv");
             spans.forEach(function (data, index) {
@@ -60,7 +61,7 @@
         <input type="text" id="zip" placeholder="Your zip code"/>
         <button type="button" onclick="getUv()">Submit</button>
         <!--<button type="button" onclick="makeDivs()">Submit</button>-->
-        <h1 id="error" class="shown">foo</h1>
+        <h1 id="error" class="hidden"></h1>
         <h1>Results:</h1>
         <div id="forecast"></div>
     </article>
