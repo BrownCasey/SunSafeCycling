@@ -13,14 +13,33 @@
 
     </style>
     <script>
+        // xhr2.open() is still a hard-coded lat/lon
+        // 1) use geolocation
+        // 2) convert from zip
         function getUv() {
             var zip = document.getElementById("zip").value;
             var xhr = new XMLHttpRequest();
             var xhr2 = new XMLHttpRequest();
+            var xhr3 = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
                     makeDivs(JSON.parse(this.responseText));
                     colorSpan();
+                }
+            };
+            
+            xhr2.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    //console.log(JSON.parse(this.responseText));
+                    console.log(JSON.parse(this.responseText).properties.forecastHourly);
+                    xhr3.open("GET", JSON.parse(this.responseText).properties.forecastHourly, true);
+                    xhr3.send();
+                };
+            };
+
+            xhr3.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log(JSON.parse(this.responseText));
                 }
             };
 
@@ -49,12 +68,6 @@
                 });
             }
 
-            xhr2.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    //console.log(JSON.parse(this.responseText));
-                    console.log(JSON.parse(this.responseText).properties.forecastHourly);
-                };
-            };
         };
         function makeDivs(json) {
             console.log(json);
@@ -68,7 +81,6 @@
 
         function colorSpan() {
             var spans = document.getElementsByClassName("uv");
-            console.log(spans.length);
             Array.from(spans).forEach(function (data, index) {
                 data.classList.add("green");
                 if (Number(data.innerText) > 2)
