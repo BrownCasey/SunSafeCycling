@@ -16,6 +16,7 @@
         function getUv() {
             var zip = document.getElementById("zip").value;
             var xhr = new XMLHttpRequest();
+            var xhr2 = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
                     makeDivs(JSON.parse(this.responseText));
@@ -38,6 +39,22 @@
                 document.getElementById("error").innerText = "Zip code should be a whole number.";
                 document.getElementById("error").className = "shown";
             }
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (location) {
+                    var lat = location.coords.latitude;
+                    var lon = location.coords.longitude;
+                    xhr2.open("GET", "https://api.weather.gov/points/33.5,-111.8", true);
+                    xhr2.send();
+                });
+            }
+
+            xhr2.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    //console.log(JSON.parse(this.responseText));
+                    console.log(JSON.parse(this.responseText).properties.forecastHourly);
+                };
+            };
         };
         function makeDivs(json) {
             console.log(json);
@@ -60,6 +77,14 @@
                     data.classList.add("red");
             });
         };
+        /*
+        function getLocation() {
+            navigator.geolocation.getCurrentPosition(function (location) {
+                console.log(location.coords.latitude);
+                console.log(location.coords.longitude);
+            });
+        }
+        */
     </script>
 </head>
 <body>
